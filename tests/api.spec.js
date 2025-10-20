@@ -12,7 +12,7 @@ test.describe("Challenge", () => {
   })
 
 
-  test("First Real Challenge", async ({ request }, testinfo) => {
+  test("First Real Challenge @api @positive", async ({ request }, testinfo) => {
 
     let resp = await request.get(`${testinfo.project.use.apiURL}/challenges`,
       {
@@ -27,7 +27,7 @@ test.describe("Challenge", () => {
 
 
    // GET Challenges
-   test("GET /todos (200)", async ({ request }, testinfo) => {
+   test("GET /todos (200) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token }
     })
@@ -37,7 +37,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty("todos")
   })
 
-  test("GET /todo (404) not plural", async ({ request }, testinfo) => {
+  test("GET /todo (404) not plural @api @negative", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todo`, {
       headers: { "x-challenger": token }
     })
@@ -45,7 +45,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(404)
   })
 
-  test("GET /todos/{id} (200)", async ({ request }, testinfo) => {
+  test("GET /todos/{id} (200) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos/1`, {
       headers: { "x-challenger": token }
     })
@@ -58,7 +58,7 @@ test.describe("Challenge", () => {
     expect(body.todos[0]).toHaveProperty("doneStatus")
   })
 
-  test("GET /todos/{id} (404)", async ({ request }, testinfo) => {
+  test("GET /todos/{id} (404) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos/99999`, {
       headers: { "x-challenger": token }
     })
@@ -68,7 +68,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages[0]).toEqual("Could not find an instance with todos/99999")
   })
 
-  test("GET /todos (200) ?filter", async ({ request }, testinfo) => {
+  test("GET /todos (200) ?filter @api @positive", async ({ request }, testinfo) => {
     // Создаем задачу со статусом DONE
     let resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token },
@@ -95,7 +95,7 @@ test.describe("Challenge", () => {
   })
 
   // HEAD Challenge
-  test("HEAD /todos (200)", async ({ request }, testinfo) => {
+  test("HEAD /todos (200) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.head(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token }
     })
@@ -105,7 +105,7 @@ test.describe("Challenge", () => {
   })
 
   // Creation Challenges with POST
-  test("POST /todos (201)", async ({ request }, testinfo) => {
+  test("POST /todos (201) @api @positive", async ({ request }, testinfo) => {
     const todoData = {
       title: "Помыть посуду",
       doneStatus: false,
@@ -124,7 +124,7 @@ test.describe("Challenge", () => {
     expect(body.description).toBe(todoData.description)
   })
 
-  test("POST /todos (400) doneStatus ", async ({ request }, testinfo) => {
+  test("POST /todos (400) doneStatus @api @negative", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token },
       data: { title: "Сдать анализы", doneStatus: "not done" }
@@ -135,7 +135,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages[0]).toEqual('Failed Validation: doneStatus should be BOOLEAN but was STRING')
   })
 
-  test("POST /todos (400) title too long", async ({ request }, testinfo) => {
+  test("POST /todos (400) title too long @api @negative", async ({ request }, testinfo) => {
     const longTitle = "Погулять, поспать, поесть, вынести мусор, купить землю для цветов, записаться на стрижку"
     
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
@@ -148,7 +148,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages).toContain("Failed Validation: Maximum allowable length exceeded for title - maximum allowed is 50")
   })
 
-  test("POST /todos (400) description too long", async ({ request }, testinfo) => {
+  test("POST /todos (400) description too long @api @negative", async ({ request }, testinfo) => {
     const longDescription = "Погулять, поспать, поесть, вынести мусор, купить землю для цветов, записаться на стрижку".repeat(3)
     
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
@@ -161,7 +161,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages).toContain("Failed Validation: Maximum allowable length exceeded for description - maximum allowed is 200")
   })
 
-  test("POST /todos (201) max out content", async ({ request }, testinfo) => {
+  test("POST /todos (201) max out content @api @positive", async ({ request }, testinfo) => {
     const maxTitle = "a".repeat(50)
     const maxDescription = "b".repeat(200)
     
@@ -178,7 +178,7 @@ test.describe("Challenge", () => {
     expect(body.description).toEqual(maxDescription)
   })
 
-  test("POST /todos (413) content too long", async ({ request }, testinfo) => {
+  test("POST /todos (413) content too long @api @negative", async ({ request }, testinfo) => {
     const title = "a".repeat(5)
     const description = "b".repeat(5001)
     
@@ -192,7 +192,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages).toContain('Error: Request body too large, max allowed is 5000 bytes')
   })
 
-  test("POST /todos (400) extra field", async ({ request }, testinfo) => {
+  test("POST /todos (400) extra field @api @negative", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token },
       data: { title: "Test", doneStatus: false, extraField: "not allowed" }
@@ -204,7 +204,7 @@ test.describe("Challenge", () => {
   })
 
   // Creation Challenges with PUT
-  test("PUT /todos/{id} (400) ", async ({ request }, testinfo) => {
+  test("PUT /todos/{id} (400) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.put(`${testinfo.project.use.apiURL}/todos/99999`, {
       headers: { "x-challenger": token },
       data: { title: "Еще задача", doneStatus: false }
@@ -217,7 +217,7 @@ test.describe("Challenge", () => {
   })
 
   // Update Challenges with POST
-  test("POST /todos/{id} (200)", async ({ request }, testinfo) => {
+  test("POST /todos/{id} (200) @api @positive", async ({ request }, testinfo) => {
     const newTitle = 'Изменившееся название'
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos/1`, {
       headers: { "x-challenger": token },
@@ -230,7 +230,7 @@ test.describe("Challenge", () => {
     expect(body.id).toEqual(1)
   })
 
-  test("POST /todos/{id} (404)", async ({ request }, testinfo) => {
+  test("POST /todos/{id} (404) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos/99999`, {
       headers: { "x-challenger": token },
       data: { title: "НОВОЕ" }
@@ -242,7 +242,7 @@ test.describe("Challenge", () => {
   })
 
   // Update Challenges with PUT
-  test("PUT /todos/{id} full (200)", async ({ request }, testinfo) => {
+  test("PUT /todos/{id} full (200) @api @positive", async ({ request }, testinfo) => {
     const updateData = {
       id: 1,
       title: "Выгулять собаку",
@@ -262,7 +262,7 @@ test.describe("Challenge", () => {
     expect(body.description).toBe(updateData.description)
   })
 
-  test("PUT /todos/{id} partial (200)", async ({ request }, testinfo) => {
+  test("PUT /todos/{id} partial (200) @api @positive", async ({ request }, testinfo) => {
     const updateData = {
       id: 2,
       title: "Полить цветы"
@@ -278,7 +278,7 @@ test.describe("Challenge", () => {
     expect(body.title).toBe(updateData.title)
   })
 
-  test("PUT /todos/{id} no title (400)", async ({ request }, testinfo) => {
+  test("PUT /todos/{id} no title (400) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.put(`${testinfo.project.use.apiURL}/todos/1`, {
       headers: { "x-challenger": token },
       data: { id: 1, doneStatus: true }
@@ -289,7 +289,7 @@ test.describe("Challenge", () => {
     expect(body.errorMessages).toContain("title : field is mandatory")
   })
 
-  test("PUT /todos/{id} no amend id (400)", async ({ request }, testinfo) => {
+  test("PUT /todos/{id} no amend id (400) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.put(`${testinfo.project.use.apiURL}/todos/1`, {
       headers: { "x-challenger": token },
       data: { id: 2, title:'Новое название', doneStatus: true }
@@ -301,7 +301,7 @@ test.describe("Challenge", () => {
   })
 
   // DELETE Challenge
-  test("DELETE /todos/{id} (200)", async ({ request }, testinfo) => {
+  test("DELETE /todos/{id} (200) @api @positive", async ({ request }, testinfo) => {
     // Создаем задачу для удаления
     let resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { "x-challenger": token },
@@ -323,7 +323,7 @@ test.describe("Challenge", () => {
   })
 
   // OPTIONS Challenge
-  test("OPTIONS /todos (200)", async ({ request }, testinfo) => {
+  test("OPTIONS /todos (200) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.fetch(`${testinfo.project.use.apiURL}/todos`, {
       method: "OPTIONS",
       headers: { "x-challenger": token }
@@ -338,7 +338,7 @@ test.describe("Challenge", () => {
   })
 
   // Accept Challenges
-  test("GET /todos (200) XML", async ({ request }, testinfo) => {
+  test("GET /todos (200) XML @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -352,7 +352,7 @@ test.describe("Challenge", () => {
     expect(body).toContain("<todos>")
   })
 
-  test("GET /todos (200) JSON", async ({ request }, testinfo) => {
+  test("GET /todos (200) JSON @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -366,7 +366,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty("todos")
   })
 
-  test("GET /todos (200) ANY", async ({ request }, testinfo) => {
+  test("GET /todos (200) ANY @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -380,7 +380,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty("todos")
   })
 
-  test("GET /todos (200) XML pref", async ({ request }, testinfo) => {
+  test("GET /todos (200) XML pref @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -394,7 +394,7 @@ test.describe("Challenge", () => {
     expect(body).toContain("<todos>")
   })
 
-  test("GET /todos (200) no accept", async ({ request }, testinfo) => {
+  test("GET /todos (200) no accept @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -408,7 +408,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty("todos")
   })
 
-  test("GET /todos (406)", async ({ request }, testinfo) => {
+  test("GET /todos (406) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -422,7 +422,7 @@ test.describe("Challenge", () => {
   })
 
   // Content-Type Challenges
-  test("POST /todos XML", async ({ request }, testinfo) => {
+  test("POST /todos XML @api @positive", async ({ request }, testinfo) => {
     const taskXML = '<todo><doneStatus>false</doneStatus><description/><title>scan paperwork</title></todo>'
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
@@ -439,7 +439,7 @@ test.describe("Challenge", () => {
     expect(body).toContain('<title>scan paperwork</title>')
   })
 
-  test("POST /todos JSON", async ({ request }, testinfo) => {
+  test("POST /todos JSON @api @positive", async ({ request }, testinfo) => {
     const taskJSON = { title: "Теперь JSON", doneStatus: false }
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
@@ -455,7 +455,7 @@ test.describe("Challenge", () => {
     expect(body.title).toBe(taskJSON.title)
   })
 
-  test("POST /todos (415)", async ({ request }, testinfo) => {
+  test("POST /todos (415) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
         "x-challenger": token,
@@ -470,7 +470,7 @@ test.describe("Challenge", () => {
   })
 
   // Restore session
-  test("GET /challenger/guid (existing X-CHALLENGER)", async ({ request }, testinfo) => {
+  test("GET /challenger/guid (existing X-CHALLENGER) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
       headers: { 
         "x-challenger": token,
@@ -482,7 +482,7 @@ test.describe("Challenge", () => {
     expect(body.xChallenger).toEqual(token)
   })
 
-  test("PUT /challenger/guid RESTORE", async ({ request }, testinfo) => {
+  test("PUT /challenger/guid RESTORE @api @positive", async ({ request }, testinfo) => {
     let resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
       headers: { 
         "x-challenger": token,
@@ -501,7 +501,7 @@ test.describe("Challenge", () => {
     expect(body.secretNote).toEqual(payload['secretNote'])
   })
 
-  test("PUT /challenger/guid CREATE", async ({ request }, testinfo) => {
+  test("PUT /challenger/guid CREATE @api @positive", async ({ request }, testinfo) => {
     // Генерируем новый GUID
     const newGuid = crypto.randomUUID()
     const templateResp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
@@ -530,7 +530,7 @@ test.describe("Challenge", () => {
   
   
 
-  test("GET /challenger/database/guid (200)", async ({ request }, testinfo) => {
+  test("GET /challenger/database/guid (200) @api @positive", async ({ request }, testinfo) => {
     let resp = await request.get(`${testinfo.project.use.apiURL}/challenger/database/${token}`, {
       headers: { 
         "x-challenger": token,
@@ -542,7 +542,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty('todos')
   })
 
-  test("PUT /challenger/database/guid (Update)", async ({ request }, testinfo) => {
+  test("PUT /challenger/database/guid (Update) @api @positive", async ({ request }, testinfo) => {
     let resp = await request.get(`${testinfo.project.use.apiURL}/challenger/database/${token}`, {
       headers: { 
         "x-challenger": token,
@@ -567,7 +567,7 @@ test.describe("Challenge", () => {
   })
   
   // Mix Accept and Content-Type Challenges
-  test("POST /todos XML to JSON", async ({ request }, testinfo) => {
+  test("POST /todos XML to JSON @api @positive", async ({ request }, testinfo) => {
     const taskXML = '<todo><doneStatus>false</doneStatus><description/><title>scan paperwork</title></todo>'
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
@@ -583,7 +583,7 @@ test.describe("Challenge", () => {
     expect(body.title).toBe('scan paperwork')
   })
 
-  test("POST /todos JSON to XML", async ({ request }, testinfo) => {
+  test("POST /todos JSON to XML @api @positive", async ({ request }, testinfo) => {
     const taskJSON = { title: "Теперь JSON", doneStatus: false }
     const resp = await request.post(`${testinfo.project.use.apiURL}/todos`, {
       headers: { 
@@ -601,7 +601,7 @@ test.describe("Challenge", () => {
   })
 
   // Status Code Challenges
-  test("DELETE /heartbeat (405)", async ({ request }, testinfo) => {
+  test("DELETE /heartbeat (405) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.delete(`${testinfo.project.use.apiURL}/heartbeat`, {
       headers: { "x-challenger": token }
     })
@@ -609,7 +609,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(405)
   })
 
-  test("GET /heartbeat (204)", async ({ request }, testinfo) => {
+  test("GET /heartbeat (204) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/heartbeat`, {
       headers: { "x-challenger": token }
     })
@@ -617,7 +617,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(204)
   })
 
-  test("PATCH /heartbeat (500)", async ({ request }, testinfo) => {
+  test("PATCH /heartbeat (500) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.patch(`${testinfo.project.use.apiURL}/heartbeat`, {
       headers: { "x-challenger": token }
     })
@@ -625,7 +625,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(500)
   })
 
-  test("TRACE /heartbeat (501)", async ({ request }, testinfo) => {
+  test("TRACE /heartbeat (501) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.fetch(`${testinfo.project.use.apiURL}/heartbeat`, {
       method: "TRACE",
       headers: { "x-challenger": token }
@@ -635,7 +635,7 @@ test.describe("Challenge", () => {
   })
 
   // Authentication Challenges
-  test("POST /secret/token (401) @auth @negative", async ({ request }, testinfo) => {
+  test("POST /secret/token (401) @api @auth @api @negative", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/secret/token`, {
       headers: { 
         "x-challenger": token,
@@ -646,7 +646,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(401)
   })
 
-  test("POST /secret/token (201) @auth", async ({ request }, testinfo) => {
+  test("POST /secret/token (201) @api @positive", async ({ request }, testinfo) => {
     const resp = await request.post(`${testinfo.project.use.apiURL}/secret/token`, {
       headers: { 
         "x-challenger": token,
@@ -658,7 +658,7 @@ test.describe("Challenge", () => {
   })
 
   // Authorization Challenges
-  test("GET /secret/note (401)", async ({ request }, testinfo) => {
+  test("GET /secret/note (401) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/secret/note`, {
       headers: { "x-challenger": token }
     })
@@ -666,7 +666,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(401)
   })
 
-  test("GET /secret/note (403) @authz @negative", async ({ request }, testinfo) => {
+  test("GET /secret/note (403) @api @negative", async ({ request }, testinfo) => {
     const resp = await request.get(`${testinfo.project.use.apiURL}/secret/note`, {
       headers: { 
         "x-challenger": token,
@@ -677,7 +677,7 @@ test.describe("Challenge", () => {
     expect(resp.status()).toBe(403)
   })
 
-  test("GET /secret/note (200)", async ({ request }, testinfo) => {
+  test("GET /secret/note (200) @api @positive", async ({ request }, testinfo) => {
     // Получаем токен сначала
     let  resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
       headers: { 
@@ -699,7 +699,7 @@ test.describe("Challenge", () => {
     expect(body).toHaveProperty("note")
   })
 
-  test("POST /secret/note (200)", async ({ request }, testinfo) => {
+  test("POST /secret/note (200) @api @positive", async ({ request }, testinfo) => {
     // Получаем токен сначала
     let  resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
       headers: { 
@@ -724,7 +724,7 @@ test.describe("Challenge", () => {
   })
 
   // HTTP Method Override Challenges
-test("POST /heartbeat as DELETE (405)", async ({ request }, testinfo) => {
+test("POST /heartbeat as DELETE (405) @api @negative", async ({ request }, testinfo) => {
   const resp = await request.post(`${testinfo.project.use.apiURL}/heartbeat`, {
     headers: { 
       "x-challenger": token,
@@ -735,7 +735,7 @@ test("POST /heartbeat as DELETE (405)", async ({ request }, testinfo) => {
   expect(resp.status()).toBe(405)
 })
 
-test("POST /heartbeat as PATCH (500)", async ({ request }, testinfo) => {
+test("POST /heartbeat as PATCH (500) @api @negative", async ({ request }, testinfo) => {
   const resp = await request.post(`${testinfo.project.use.apiURL}/heartbeat`, {
     headers: { 
       "x-challenger": token,
@@ -747,7 +747,7 @@ test("POST /heartbeat as PATCH (500)", async ({ request }, testinfo) => {
   expect(resp.statusText()).toContain("Internal Server Error")
 })
 
-test("POST /heartbeat as TRACE (501)", async ({ request }, testinfo) => {
+test("POST /heartbeat as TRACE (501) @api @negative", async ({ request }, testinfo) => {
   const resp = await request.post(`${testinfo.project.use.apiURL}/heartbeat`, {
     headers: { 
       "x-challenger": token,
@@ -761,7 +761,7 @@ test("POST /heartbeat as TRACE (501)", async ({ request }, testinfo) => {
 
 
 // Authorization Challenges - POST
-test("POST /secret/note (401) no token @authz @negative @post", async ({ request }, testinfo) => {
+test("POST /secret/note (401) no token @api @negative", async ({ request }, testinfo) => {
   const resp = await request.post(`${testinfo.project.use.apiURL}/secret/note`, {
     headers: { 
       "x-challenger": token
@@ -772,7 +772,7 @@ test("POST /secret/note (401) no token @authz @negative @post", async ({ request
   expect(resp.status()).toBe(401)
 })
 
-test("POST /secret/note (403) invalid token", async ({ request }, testinfo) => {
+test("POST /secret/note (403) invalid token @api @negative", async ({ request }, testinfo) => {
   const resp = await request.post(`${testinfo.project.use.apiURL}/secret/note`, {
     headers: { 
       "x-challenger": token,
@@ -784,7 +784,7 @@ test("POST /secret/note (403) invalid token", async ({ request }, testinfo) => {
   expect(resp.status()).toBe(403)
 })
 
-test("GET /secret/note (Bearer)", async ({ request }, testinfo) => {
+test("GET /secret/note (Bearer) @api @positive", async ({ request }, testinfo) => {
   // Получаем токен сначала
   let  resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
     headers: { 
@@ -808,7 +808,7 @@ test("GET /secret/note (Bearer)", async ({ request }, testinfo) => {
   expect(typeof body.note).toBe("string")
 })
 
-test("POST /secret/note (Bearer)", async ({ request }, testinfo) => {
+test("POST /secret/note (Bearer) @api @positive", async ({ request }, testinfo) => {
   // Получаем токен сначала
   let  resp = await request.get(`${testinfo.project.use.apiURL}/challenger/${token}`, {
     headers: { 
@@ -843,7 +843,7 @@ test("POST /secret/note (Bearer)", async ({ request }, testinfo) => {
 })
 
 // Miscellaneous Challenges
-test("DELETE /todos/{id} (200) all", async ({ request }, testinfo) => {
+test("DELETE /todos/{id} (200) all @api @positive", async ({ request }, testinfo) => {
   // Получаем все todos
   let resp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
     headers: { "x-challenger": token }
@@ -871,7 +871,7 @@ test("DELETE /todos/{id} (200) all", async ({ request }, testinfo) => {
   expect(todosBody.todos.length).toBe(0)
 })
 
-test("POST /todos (201) all", async ({ request }, testinfo) => {
+test("POST /todos (201) all @api @api @api @positive", async ({ request }, testinfo) => {
   const maxTodos = 20
   
   let todosResp = await request.get(`${testinfo.project.use.apiURL}/todos`, {
