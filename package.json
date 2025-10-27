@@ -5,8 +5,7 @@
   "scripts": {
     "test": "npx playwright test",
     "testUI": "npx playwright test --ui",
-    "report": "npx playwright show-report",
-    "test:api": "npx playwright test --grep @api"
+    "report": "npx playwright show-report"
   },
   "keywords": [],
   "author": "",

@@ -1,6 +1,4 @@
 import { test, expect } from "@playwright/test"
-import { ChallengerService } from "../src/services"
-import { Api } from '../src/services/api.service'
 
 let token
 const crypto = require("crypto")
